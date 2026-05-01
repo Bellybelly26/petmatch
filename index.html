@@ -1,82 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>PetMatch</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetMatch | Encontre seu melhor amigo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <div class="logo">🐾</div>
-  <h1>PetMatch</h1>
-  <button id="loginBtn">Login</button>
-</header>
+    <header class="header-fixo">
+        <div class="logo">🐾 PetMatch</div>
+        <nav>
+            <button onclick="showPage('home')">Início</button>
+            <button onclick="showPage('adotar')">Adotar</button>
+            <button onclick="showPage('teste')">Teste Match</button>
+        </nav>
+        <button id="btnOpenLogin" class="btn-login">Entrar</button>
+    </header>
 
-<!-- CARROSSEL -->
-<section class="carousel">
-  <div class="slides">
-    <img src="https://placekitten.com/800/300">
-    <img src="https://placedog.net/800/300">
-    <img src="https://placebear.com/800/300">
-  </div>
-</section>
+    <!-- PÁGINA INICIAL -->
+    <section id="home" class="page active">
+        <div class="carousel">
+            <div class="carousel-container" id="carousel">
+                <div class="slide" style="background-image: url('https://unsplash.com')">
+                    <h2>Adotar é um ato de amor</h2>
+                </div>
+                <div class="slide" style="background-image: url('https://unsplash.com')">
+                    <h2>Histórias de Sucesso: Rex e Ana</h2>
+                </div>
+            </div>
+        </div>
 
-<!-- MENU -->
-<nav id="menu" class="hidden">
-  <button onclick="showPets()">Pets</button>
-  <button onclick="showCompatibilidade()">Compatibilidade</button>
-  <button onclick="showFavoritos()">Favoritos</button>
-</nav>
+        <div class="stats-section">
+            <div class="stat-card"><h3>1.200</h3><p>Resgatados</p></div>
+            <div class="stat-card"><h3>850</h3><p>Adotados</p></div>
+        </div>
+    </section>
 
-<!-- PETS -->
-<section id="petsSection" class="section">
-  <h2>Pets disponíveis</h2>
-  <input type="text" id="search" placeholder="Buscar pet...">
-  <div id="petList" class="pet-list"></div>
-</section>
+    <!-- PÁGINA DE LISTAGEM -->
+    <section id="adotar" class="page">
+        <div class="filter-bar">
+            <input type="text" id="searchPet" placeholder="Buscar por nome ou raça..." onkeyup="filterPets()">
+        </div>
+        <div class="pets-grid" id="petsGrid">
+            <!-- Cards gerados por JS -->
+        </div>
+    </section>
 
-<!-- FAVORITOS -->
-<section id="favSection" class="section hidden">
-  <h2>Favoritos</h2>
-  <div id="favList" class="pet-list"></div>
-</section>
+    <!-- PÁGINA TESTE DE COMPATIBILIDADE -->
+    <section id="teste" class="page">
+        <div class="quiz-container" id="quizBody">
+            <h2>Teste de Compatibilidade</h2>
+            <div id="perguntaAtual">
+                <p>Onde você mora?</p>
+                <button class="btn-quiz" onclick="nextQuestion('apartamento')">Apartamento</button>
+                <button class="btn-quiz" onclick="nextQuestion('casa')">Casa com Quintal</button>
+            </div>
+        </div>
+    </section>
 
-<!-- COMPATIBILIDADE -->
-<section id="compSection" class="section hidden">
-  <h2>Teste de Compatibilidade</h2>
-
-  <div id="quiz">
-    <p>Onde você mora?</p>
-    <button onclick="resposta('casa')">Casa</button>
-    <button onclick="resposta('apto')">Apartamento</button>
-  </div>
-
-  <div id="resultado"></div>
-</section>
-
-<!-- MODAL LOGIN -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <h2>Login</h2>
-
-    <input type="email" placeholder="Email">
-    <input type="password" placeholder="Senha">
-
-    <div class="user-type">
-      <div class="card adotador" data-type="adotador">Adotador</div>
-      <div class="card ong" data-type="ong">ONG</div>
+    <!-- MODAL LOGIN -->
+    <div id="modalLogin" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Login PetMatch</h3>
+            <div class="perfil-selecao">
+                <div class="card-perfil" onclick="selectPerfil('adotador', this)">
+                    <h4>Adotador</h4>
+                </div>
+                <div class="card-perfil" onclick="selectPerfil('ong', this)">
+                    <h4>Representante ONG</h4>
+                </div>
+            </div>
+            <input type="email" placeholder="E-mail">
+            <input type="password" placeholder="Senha">
+            <button class="btn-confirmar" onclick="realizarLogin()">Entrar</button>
+            <button onclick="closeModals()" class="btn-link">Cancelar</button>
+        </div>
     </div>
 
-    <button id="entrar">Entrar</button>
-  </div>
-</div>
-
-<!-- MODAL PET -->
-<div class="modal" id="petModal">
-  <div class="modal-content" id="petDetails"></div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

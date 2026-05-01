@@ -1,62 +1,147 @@
-// Dados simulados
+// ESTADO
+let user = JSON.parse(localStorage.getItem("user")) || null;
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
+// PETS
 const pets = [
-    { id: 1, nome: "Bolinha", tipo: "Cão", raca: "Poodle", idade: "2 anos", img: "https://unsplash.com" },
-    { id: 2, nome: "Mel", tipo: "Gato", raca: "Siamês", idade: "1 ano", img: "https://unsplash.com" },
+  {id:1, nome:"Luna", tipo:"calmo", apto:true, img:"https://placekitten.com/200/200"},
+  {id:2, nome:"Max", tipo:"ativo", apto:false, img:"https://placedog.net/200/200"},
+  {id:3, nome:"Milo", tipo:"calmo", apto:true, img:"https://placekitten.com/201/200"}
 ];
 
-// Navegação entre páginas
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    if(pageId === 'adotar') renderPets(pets);
+// LOGIN
+const loginModal = document.getElementById("loginModal");
+document.getElementById("loginBtn").onclick = () => loginModal.style.display = "flex";
+
+let selectedType = null;
+
+document.querySelectorAll(".card").forEach(c => {
+  c.onclick = () => {
+    document.querySelectorAll(".card").forEach(x => x.classList.remove("selected"));
+    c.classList.add("selected");
+    selectedType = c.dataset.type;
+  };
+});
+
+document.getElementById("enterBtn").onclick = () => {
+  if (!selectedType) return alert("Escolha um tipo");
+
+  user = {tipo:selectedType};
+  localStorage.setItem("user", JSON.stringify(user));
+
+  loginModal.style.display = "none";
+  iniciarSistema();
+};
+
+// INICIAR
+function iniciarSistema() {
+  document.getElementById("menu").classList.remove("hidden");
+  renderPets();
 }
 
-// Renderização dos cards
-function renderPets(data) {
-    const grid = document.getElementById('petsGrid');
-    grid.innerHTML = data.map(pet => `
-        <div class="pet-card">
-            <img src="${pet.img}">
-            <div class="pet-info">
-                <h4>${pet.nome}</h4>
-                <p>${pet.raca} - ${pet.idade}</p>
-                <button class="btn-confirmar" style="width:100%; margin-top:10px">Ver Detalhes</button>
-            </div>
+// NAVEGAÇÃO
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+    document.getElementById(btn.dataset.page).classList.remove("hidden");
+
+    if (btn.dataset.page === "favoritos") renderFavoritos();
+    if (btn.dataset.page === "quiz") renderQuiz();
+  };
+});
+
+// RENDER PETS
+function renderPets() {
+  const container = document.getElementById("pets");
+
+  container.innerHTML = `
+    <h2>Pets</h2>
+    <div class="grid">
+      ${pets.map(p => `
+        <div class="card-pet">
+          <img src="${p.img}">
+          <h3>${p.nome}</h3>
+          <button onclick="verPet(${p.id})">Ver</button>
+          <button onclick="toggleFav(${p.id})">
+            ${favoritos.includes(p.id) ? "★" : "☆"}
+          </button>
         </div>
-    `).join('');
+      `).join("")}
+    </div>
+  `;
 }
 
-// Filtro dinâmico
-function filterPets() {
-    const termo = document.getElementById('searchPet').value.toLowerCase();
-    const filtrados = pets.filter(p => p.nome.toLowerCase().includes(termo) || p.raca.toLowerCase().includes(termo));
-    renderPets(filtrados);
+// FAVORITOS
+function toggleFav(id) {
+  if (favoritos.includes(id)) {
+    favoritos = favoritos.filter(f => f !== id);
+  } else {
+    favoritos.push(id);
+  }
+
+  localStorage.setItem("favoritos", JSON.stringify(favoritos));
+  renderPets();
 }
 
-// Controle do Modal
-const modalLogin = document.getElementById('modalLogin');
-document.getElementById('btnOpenLogin').onclick = () => modalLogin.style.display = 'flex';
+function renderFavoritos() {
+  const container = document.getElementById("favoritos");
 
-function closeModals() { modalLogin.style.display = 'none'; }
+  const lista = pets.filter(p => favoritos.includes(p.id));
 
-let userType = "";
-function selectPerfil(tipo, element) {
-    userType = tipo;
-    document.querySelectorAll('.card-perfil').forEach(c => c.className = 'card-perfil');
-    element.classList.add(tipo === 'adotador' ? 'selected-adotador' : 'selected-ong');
+  container.innerHTML = `
+    <h2>Favoritos</h2>
+    <div class="grid">
+      ${lista.map(p => `
+        <div class="card-pet">
+          <img src="${p.img}">
+          <h3>${p.nome}</h3>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
-function realizarLogin() {
-    if(!userType) return alert("Selecione um perfil!");
-    alert("Login realizado como " + userType);
-    closeModals();
-    // Muda a cor do botão baseado no perfil
-    document.getElementById('btnOpenLogin').style.backgroundColor = userType === 'adotador' ? '#2ecc71' : '#3498db';
+// DETALHES
+function verPet(id) {
+  const pet = pets.find(p => p.id === id);
+
+  document.getElementById("petDetails").innerHTML = `
+    <h2>${pet.nome}</h2>
+    <img src="${pet.img}" style="width:100%">
+    <p>Perfil: ${pet.tipo}</p>
+    <button onclick="alert('Adoção iniciada')">Quero Adotar</button>
+  `;
+
+  document.getElementById("petModal").style.display = "flex";
 }
 
-// Lógica Simples de Carrossel
-let currentSlide = 0;
-setInterval(() => {
-    currentSlide = (currentSlide + 1) % 2;
-    document.getElementById('carousel').style.transform = `translateX(-${currentSlide * 100}%)`;
-}, 5000);
+// QUIZ
+function renderQuiz() {
+  const container = document.getElementById("quiz");
+
+  container.innerHTML = `
+    <h2>Compatibilidade</h2>
+    <p>Você mora em:</p>
+    <button onclick="resultadoQuiz(true)">Casa</button>
+    <button onclick="resultadoQuiz(false)">Apartamento</button>
+    <div id="res"></div>
+  `;
+}
+
+function resultadoQuiz(casa) {
+  const res = pets.filter(p => p.apto === casa);
+
+  document.getElementById("res").innerHTML = res.map(p => `
+    <p>${p.nome}</p>
+  `).join("");
+}
+
+// FECHAR MODAL
+window.onclick = e => {
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
+  }
+};
+
+// AUTO LOGIN
+if (user) iniciarSistema();

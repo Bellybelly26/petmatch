@@ -1,147 +1,60 @@
-// ESTADO
-let user = JSON.parse(localStorage.getItem("user")) || null;
-let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+// --- Modal de Login ---
+const loginBtn = document.getElementById('loginBtn');
+const modalOverlay = document.getElementById('modalOverlay');
+const closeBtn = document.getElementById('closeBtn');
+const recoverLink = document.getElementById('recoverLink');
+const backToLogin = document.getElementById('backToLogin');
+const formLogin = document.getElementById('form-login');
+const formRecover = document.getElementById('form-recover');
 
-// PETS
-const pets = [
-  {id:1, nome:"Luna", tipo:"calmo", apto:true, img:"https://placekitten.com/200/200"},
-  {id:2, nome:"Max", tipo:"ativo", apto:false, img:"https://placedog.net/200/200"},
-  {id:3, nome:"Milo", tipo:"calmo", apto:true, img:"https://placekitten.com/201/200"}
-];
-
-// LOGIN
-const loginModal = document.getElementById("loginModal");
-document.getElementById("loginBtn").onclick = () => loginModal.style.display = "flex";
-
-let selectedType = null;
-
-document.querySelectorAll(".card").forEach(c => {
-  c.onclick = () => {
-    document.querySelectorAll(".card").forEach(x => x.classList.remove("selected"));
-    c.classList.add("selected");
-    selectedType = c.dataset.type;
-  };
+loginBtn.addEventListener('click', () => modalOverlay.style.display = 'flex');
+closeBtn.addEventListener('click', () => modalOverlay.style.display = 'none');
+window.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) modalOverlay.style.display = 'none';
 });
 
-document.getElementById("enterBtn").onclick = () => {
-  if (!selectedType) return alert("Escolha um tipo");
-
-  user = {tipo:selectedType};
-  localStorage.setItem("user", JSON.stringify(user));
-
-  loginModal.style.display = "none";
-  iniciarSistema();
-};
-
-// INICIAR
-function iniciarSistema() {
-  document.getElementById("menu").classList.remove("hidden");
-  renderPets();
-}
-
-// NAVEGAÇÃO
-document.querySelectorAll("nav button").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-    document.getElementById(btn.dataset.page).classList.remove("hidden");
-
-    if (btn.dataset.page === "favoritos") renderFavoritos();
-    if (btn.dataset.page === "quiz") renderQuiz();
-  };
+// Alternar entre login e recuperar senha
+recoverLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    formLogin.style.display = 'none';
+    formRecover.style.display = 'block';
 });
 
-// RENDER PETS
-function renderPets() {
-  const container = document.getElementById("pets");
+backToLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    formRecover.style.display = 'none';
+    formLogin.style.display = 'block';
+});
 
-  container.innerHTML = `
-    <h2>Pets</h2>
-    <div class="grid">
-      ${pets.map(p => `
-        <div class="card-pet">
-          <img src="${p.img}">
-          <h3>${p.nome}</h3>
-          <button onclick="verPet(${p.id})">Ver</button>
-          <button onclick="toggleFav(${p.id})">
-            ${favoritos.includes(p.id) ? "★" : "☆"}
-          </button>
-        </div>
-      `).join("")}
-    </div>
-  `;
+// --- Carrossel ---
+let slideIndex = 0;
+showSlides();
+
+function showSlides() {
+    let slides = document.getElementsByClassName("slide");
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}
+    slides[slideIndex-1].style.display = "block";
+    setTimeout(showSlides, 4000); // Muda a imagem a cada 4 segundos
 }
 
-// FAVORITOS
-function toggleFav(id) {
-  if (favoritos.includes(id)) {
-    favoritos = favoritos.filter(f => f !== id);
-  } else {
-    favoritos.push(id);
-  }
-
-  localStorage.setItem("favoritos", JSON.stringify(favoritos));
-  renderPets();
-}
-
-function renderFavoritos() {
-  const container = document.getElementById("favoritos");
-
-  const lista = pets.filter(p => favoritos.includes(p.id));
-
-  container.innerHTML = `
-    <h2>Favoritos</h2>
-    <div class="grid">
-      ${lista.map(p => `
-        <div class="card-pet">
-          <img src="${p.img}">
-          <h3>${p.nome}</h3>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-// DETALHES
-function verPet(id) {
-  const pet = pets.find(p => p.id === id);
-
-  document.getElementById("petDetails").innerHTML = `
-    <h2>${pet.nome}</h2>
-    <img src="${pet.img}" style="width:100%">
-    <p>Perfil: ${pet.tipo}</p>
-    <button onclick="alert('Adoção iniciada')">Quero Adotar</button>
-  `;
-
-  document.getElementById("petModal").style.display = "flex";
-}
-
-// QUIZ
-function renderQuiz() {
-  const container = document.getElementById("quiz");
-
-  container.innerHTML = `
-    <h2>Compatibilidade</h2>
-    <p>Você mora em:</p>
-    <button onclick="resultadoQuiz(true)">Casa</button>
-    <button onclick="resultadoQuiz(false)">Apartamento</button>
-    <div id="res"></div>
-  `;
-}
-
-function resultadoQuiz(casa) {
-  const res = pets.filter(p => p.apto === casa);
-
-  document.getElementById("res").innerHTML = res.map(p => `
-    <p>${p.nome}</p>
-  `).join("");
-}
-
-// FECHAR MODAL
-window.onclick = e => {
-  if (e.target.classList.contains("modal")) {
-    e.target.style.display = "none";
-  }
-};
-
-// AUTO LOGIN
-if (user) iniciarSistema();
+// --- Contador dos Gráficos ---
+const counts = document.querySelectorAll('.count');
+counts.forEach(count => {
+    count.innerText = '0';
+    const updateCount = () => {
+        const target = +count.getAttribute('data-target');
+        const current = +count.innerText;
+        const increment = target / 100;
+        if (current < target) {
+            count.innerText = Math.ceil(current + increment);
+            setTimeout(updateCount, 20);
+        } else {
+            count.innerText = target;
+        }
+    };
+    updateCount();
+});

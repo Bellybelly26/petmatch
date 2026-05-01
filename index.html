@@ -1,83 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetMatch | Encontre seu melhor amigo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>PetMatch</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="header-fixo">
-        <div class="logo">🐾 PetMatch</div>
-        <nav>
-            <button onclick="showPage('home')">Início</button>
-            <button onclick="showPage('adotar')">Adotar</button>
-            <button onclick="showPage('teste')">Teste Match</button>
-        </nav>
-        <button id="btnOpenLogin" class="btn-login">Entrar</button>
-    </header>
+<header>
+  <h1>🐾 PetMatch</h1>
+  <button id="loginBtn">Login</button>
+</header>
 
-    <!-- PÁGINA INICIAL -->
-    <section id="home" class="page active">
-        <div class="carousel">
-            <div class="carousel-container" id="carousel">
-                <div class="slide" style="background-image: url('https://unsplash.com')">
-                    <h2>Adotar é um ato de amor</h2>
-                </div>
-                <div class="slide" style="background-image: url('https://unsplash.com')">
-                    <h2>Histórias de Sucesso: Rex e Ana</h2>
-                </div>
-            </div>
-        </div>
+<nav id="menu" class="hidden">
+  <button data-page="pets">Pets</button>
+  <button data-page="favoritos">Favoritos</button>
+  <button data-page="quiz">Compatibilidade</button>
+</nav>
 
-        <div class="stats-section">
-            <div class="stat-card"><h3>1.200</h3><p>Resgatados</p></div>
-            <div class="stat-card"><h3>850</h3><p>Adotados</p></div>
-        </div>
-    </section>
+<main>
+  <section id="pets" class="page"></section>
+  <section id="favoritos" class="page hidden"></section>
+  <section id="quiz" class="page hidden"></section>
+</main>
 
-    <!-- PÁGINA DE LISTAGEM -->
-    <section id="adotar" class="page">
-        <div class="filter-bar">
-            <input type="text" id="searchPet" placeholder="Buscar por nome ou raça..." onkeyup="filterPets()">
-        </div>
-        <div class="pets-grid" id="petsGrid">
-            <!-- Cards gerados por JS -->
-        </div>
-    </section>
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h2>Login</h2>
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Senha">
 
-    <!-- PÁGINA TESTE DE COMPATIBILIDADE -->
-    <section id="teste" class="page">
-        <div class="quiz-container" id="quizBody">
-            <h2>Teste de Compatibilidade</h2>
-            <div id="perguntaAtual">
-                <p>Onde você mora?</p>
-                <button class="btn-quiz" onclick="nextQuestion('apartamento')">Apartamento</button>
-                <button class="btn-quiz" onclick="nextQuestion('casa')">Casa com Quintal</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- MODAL LOGIN -->
-    <div id="modalLogin" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Login PetMatch</h3>
-            <div class="perfil-selecao">
-                <div class="card-perfil" onclick="selectPerfil('adotador', this)">
-                    <h4>Adotador</h4>
-                </div>
-                <div class="card-perfil" onclick="selectPerfil('ong', this)">
-                    <h4>Representante ONG</h4>
-                </div>
-            </div>
-            <input type="email" placeholder="E-mail">
-            <input type="password" placeholder="Senha">
-            <button class="btn-confirmar" onclick="realizarLogin()">Entrar</button>
-            <button onclick="closeModals()" class="btn-link">Cancelar</button>
-        </div>
+    <div class="user-type">
+      <div class="card" data-type="adotador">Adotador</div>
+      <div class="card" data-type="ong">ONG</div>
     </div>
 
-    <script src="script.js"></script>
+    <button id="enterBtn">Entrar</button>
+  </div>
+</div>
+
+<!-- DETALHES -->
+<div class="modal" id="petModal">
+  <div class="modal-box" id="petDetails"></div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

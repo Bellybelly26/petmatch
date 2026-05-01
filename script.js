@@ -1,61 +1,123 @@
-// --- Modal de Login ---
-const loginBtn = document.getElementById('loginBtn');
-const modalOverlay = document.getElementById('modalOverlay');
-const closeBtn = document.getElementById('closeBtn');
-const recoverLink = document.getElementById('recoverLink');
-const backToLogin = document.getElementById('backToLogin');
-const formLogin = document.getElementById('form-login');
-const formRecover = document.getElementById('form-recover');
+// LOGIN
+const modal = document.getElementById("modal");
+document.getElementById("loginBtn").onclick = () => modal.style.display = "flex";
 
-loginBtn.addEventListener('click', () => modalOverlay.style.display = 'flex');
-closeBtn.addEventListener('click', () => modalOverlay.style.display = 'none');
-window.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+let userType = null;
+
+document.querySelectorAll(".card").forEach(card => {
+  card.onclick = () => {
+    document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+    userType = card.dataset.type;
+  };
 });
 
-// Alternar entre login e recuperar senha
-recoverLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    formLogin.style.display = 'none';
-    formRecover.style.display = 'block';
-});
+// ENTRAR
+document.getElementById("entrar").onclick = () => {
+  if (!userType) return alert("Escolha um tipo!");
 
-backToLogin.addEventListener('click', (e) => {
-    e.preventDefault();
-    formRecover.style.display = 'none';
-    formLogin.style.display = 'block';
-});
+  modal.style.display = "none";
+  document.getElementById("menu").classList.remove("hidden");
 
-// --- Carrossel ---
-let slideIndex = 0;
-showSlides();
+  if (userType === "ong") {
+    document.body.style.background = "#e3f2fd";
+  } else {
+    document.body.style.background = "#e8f5e9";
+  }
+};
 
-function showSlides() {
-    let slides = document.getElementsByClassName("slide");
-    for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) {slideIndex = 1}
-    slides[slideIndex-1].style.display = "block";
-    setTimeout(showSlides, 4000); // Muda a imagem a cada 4 segundos
+// PETS
+const pets = [
+  {nome:"Luna", tipo:"calmo", casa:true, img:"https://placekitten.com/200/200"},
+  {nome:"Max", tipo:"ativo", casa:false, img:"https://placedog.net/200/200"},
+  {nome:"Milo", tipo:"calmo", casa:false, img:"https://placekitten.com/201/200"}
+];
+
+let favoritos = [];
+
+function render(lista, container) {
+  container.innerHTML = "";
+  lista.forEach(pet => {
+    const div = document.createElement("div");
+    div.className = "pet-card";
+
+    div.innerHTML = `
+      <img src="${pet.img}">
+      <h3>${pet.nome}</h3>
+      <button onclick="favoritar('${pet.nome}')">⭐</button>
+    `;
+
+    div.onclick = () => openPet(pet);
+    container.appendChild(div);
+  });
 }
 
-// --- Contador dos Gráficos ---
-const counts = document.querySelectorAll('.count');
-counts.forEach(count => {
-    count.innerText = '0';
-    const updateCount = () => {
-        const target = +count.getAttribute('data-target');
-        const current = +count.innerText;
-        const increment = target / 100;
-        if (current < target) {
-            count.innerText = Math.ceil(current + increment);
-            setTimeout(updateCount, 20);
-        } else {
-            count.innerText = target;
-        }
-    };
-    updateCount();
-});
+render(pets, document.getElementById("petList"));
 
+// FAVORITAR
+function favoritar(nome) {
+  const pet = pets.find(p => p.nome === nome);
+  if (!favoritos.includes(pet)) favoritos.push(pet);
+}
+
+// FAVORITOS
+function showFavoritos() {
+  hideAll();
+  document.getElementById("favSection").classList.remove("hidden");
+  render(favoritos, document.getElementById("favList"));
+}
+
+// BUSCA
+document.getElementById("search").oninput = (e) => {
+  const v = e.target.value.toLowerCase();
+  render(pets.filter(p => p.nome.toLowerCase().includes(v)), petList);
+};
+
+// MODAL PET
+const petModal = document.getElementById("petModal");
+const petDetails = document.getElementById("petDetails");
+
+function openPet(pet) {
+  petDetails.innerHTML = `
+    <h2>${pet.nome}</h2>
+    <img src="${pet.img}">
+    <p>Perfil: ${pet.tipo}</p>
+    <button>Quero Adotar</button>
+  `;
+  petModal.style.display = "flex";
+}
+
+// COMPATIBILIDADE
+function showCompatibilidade() {
+  hideAll();
+  document.getElementById("compSection").classList.remove("hidden");
+}
+
+function resposta(tipo) {
+  let resultado = "";
+
+  if (tipo === "apto") {
+    resultado = pets.filter(p => !p.casa);
+  } else {
+    resultado = pets;
+  }
+
+  render(resultado, document.getElementById("resultado"));
+}
+
+// MENU
+function showPets() {
+  hideAll();
+  document.getElementById("petsSection").classList.remove("hidden");
+}
+
+function hideAll() {
+  document.querySelectorAll(".section").forEach(s => s.classList.add("hidden"));
+}
+
+// FECHAR MODAL
+window.onclick = (e) => {
+  if (e.target.classList.contains("modal")) {
+    e.target.style.display = "none";
+  }
+};

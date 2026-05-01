@@ -1,123 +1,62 @@
-// LOGIN
-const modal = document.getElementById("modal");
-document.getElementById("loginBtn").onclick = () => modal.style.display = "flex";
-
-let userType = null;
-
-document.querySelectorAll(".card").forEach(card => {
-  card.onclick = () => {
-    document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-    card.classList.add("selected");
-    userType = card.dataset.type;
-  };
-});
-
-// ENTRAR
-document.getElementById("entrar").onclick = () => {
-  if (!userType) return alert("Escolha um tipo!");
-
-  modal.style.display = "none";
-  document.getElementById("menu").classList.remove("hidden");
-
-  if (userType === "ong") {
-    document.body.style.background = "#e3f2fd";
-  } else {
-    document.body.style.background = "#e8f5e9";
-  }
-};
-
-// PETS
+// Dados simulados
 const pets = [
-  {nome:"Luna", tipo:"calmo", casa:true, img:"https://placekitten.com/200/200"},
-  {nome:"Max", tipo:"ativo", casa:false, img:"https://placedog.net/200/200"},
-  {nome:"Milo", tipo:"calmo", casa:false, img:"https://placekitten.com/201/200"}
+    { id: 1, nome: "Bolinha", tipo: "Cão", raca: "Poodle", idade: "2 anos", img: "https://unsplash.com" },
+    { id: 2, nome: "Mel", tipo: "Gato", raca: "Siamês", idade: "1 ano", img: "https://unsplash.com" },
 ];
 
-let favoritos = [];
-
-function render(lista, container) {
-  container.innerHTML = "";
-  lista.forEach(pet => {
-    const div = document.createElement("div");
-    div.className = "pet-card";
-
-    div.innerHTML = `
-      <img src="${pet.img}">
-      <h3>${pet.nome}</h3>
-      <button onclick="favoritar('${pet.nome}')">⭐</button>
-    `;
-
-    div.onclick = () => openPet(pet);
-    container.appendChild(div);
-  });
+// Navegação entre páginas
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    if(pageId === 'adotar') renderPets(pets);
 }
 
-render(pets, document.getElementById("petList"));
-
-// FAVORITAR
-function favoritar(nome) {
-  const pet = pets.find(p => p.nome === nome);
-  if (!favoritos.includes(pet)) favoritos.push(pet);
+// Renderização dos cards
+function renderPets(data) {
+    const grid = document.getElementById('petsGrid');
+    grid.innerHTML = data.map(pet => `
+        <div class="pet-card">
+            <img src="${pet.img}">
+            <div class="pet-info">
+                <h4>${pet.nome}</h4>
+                <p>${pet.raca} - ${pet.idade}</p>
+                <button class="btn-confirmar" style="width:100%; margin-top:10px">Ver Detalhes</button>
+            </div>
+        </div>
+    `).join('');
 }
 
-// FAVORITOS
-function showFavoritos() {
-  hideAll();
-  document.getElementById("favSection").classList.remove("hidden");
-  render(favoritos, document.getElementById("favList"));
+// Filtro dinâmico
+function filterPets() {
+    const termo = document.getElementById('searchPet').value.toLowerCase();
+    const filtrados = pets.filter(p => p.nome.toLowerCase().includes(termo) || p.raca.toLowerCase().includes(termo));
+    renderPets(filtrados);
 }
 
-// BUSCA
-document.getElementById("search").oninput = (e) => {
-  const v = e.target.value.toLowerCase();
-  render(pets.filter(p => p.nome.toLowerCase().includes(v)), petList);
-};
+// Controle do Modal
+const modalLogin = document.getElementById('modalLogin');
+document.getElementById('btnOpenLogin').onclick = () => modalLogin.style.display = 'flex';
 
-// MODAL PET
-const petModal = document.getElementById("petModal");
-const petDetails = document.getElementById("petDetails");
+function closeModals() { modalLogin.style.display = 'none'; }
 
-function openPet(pet) {
-  petDetails.innerHTML = `
-    <h2>${pet.nome}</h2>
-    <img src="${pet.img}">
-    <p>Perfil: ${pet.tipo}</p>
-    <button>Quero Adotar</button>
-  `;
-  petModal.style.display = "flex";
+let userType = "";
+function selectPerfil(tipo, element) {
+    userType = tipo;
+    document.querySelectorAll('.card-perfil').forEach(c => c.className = 'card-perfil');
+    element.classList.add(tipo === 'adotador' ? 'selected-adotador' : 'selected-ong');
 }
 
-// COMPATIBILIDADE
-function showCompatibilidade() {
-  hideAll();
-  document.getElementById("compSection").classList.remove("hidden");
+function realizarLogin() {
+    if(!userType) return alert("Selecione um perfil!");
+    alert("Login realizado como " + userType);
+    closeModals();
+    // Muda a cor do botão baseado no perfil
+    document.getElementById('btnOpenLogin').style.backgroundColor = userType === 'adotador' ? '#2ecc71' : '#3498db';
 }
 
-function resposta(tipo) {
-  let resultado = "";
-
-  if (tipo === "apto") {
-    resultado = pets.filter(p => !p.casa);
-  } else {
-    resultado = pets;
-  }
-
-  render(resultado, document.getElementById("resultado"));
-}
-
-// MENU
-function showPets() {
-  hideAll();
-  document.getElementById("petsSection").classList.remove("hidden");
-}
-
-function hideAll() {
-  document.querySelectorAll(".section").forEach(s => s.classList.add("hidden"));
-}
-
-// FECHAR MODAL
-window.onclick = (e) => {
-  if (e.target.classList.contains("modal")) {
-    e.target.style.display = "none";
-  }
-};
+// Lógica Simples de Carrossel
+let currentSlide = 0;
+setInterval(() => {
+    currentSlide = (currentSlide + 1) % 2;
+    document.getElementById('carousel').style.transform = `translateX(-${currentSlide * 100}%)`;
+}, 5000);

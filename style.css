@@ -1,13 +1,37 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body {
-    background-color: #f4f7f6;
-    color: #333;
+body{
+        font-family: “Poppins’, sans-serif;
+}
+:root{
+     --verde-principal: #4CAF50;
+     –verde-suave: #66BB6A;
+     --verde-escuro: #2E7D32:
+
+     –azul-principal: #1T3A8A;
+     –azul-vibrante: #2563EB;
+     --azul-claro: #2563EB;
+
+     –branco: #FFFFFF;
+     --cinza-claro: #F5F5F5;
+     --cinza-borda: #E0E0E0;
+
+     –texto-principal: #333333;
+     --texto-secundário: #777777;
+}
+
+.background-azul{
+       background: var(--azul-principal);
+}
+/* classes reutilizáveis */
+.container{
+
 }
 
 /* Header */

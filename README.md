@@ -1,5 +1,4 @@
-# 🐾 PetMatch - Vanilla JavaScript
-
+# 🐾 PetMatch 
 Plataforma de adoção de animais desenvolvida em **HTML, CSS e JavaScript puro** (sem frameworks).
 
 ## 📋 Estrutura do Projeto
